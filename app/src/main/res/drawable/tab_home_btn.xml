@@ -3,7 +3,7 @@
 
         <!-- 指定选择时和未被选择的图片 -->
         <item android:drawable="@drawable/home_selected"
-            android:state_selected="true"/>
+              android:state_selected="true"/>
         <item android:drawable="@drawable/home" />
 
 

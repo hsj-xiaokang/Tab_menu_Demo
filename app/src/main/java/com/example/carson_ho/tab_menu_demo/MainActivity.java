@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,16 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity implements
         ViewPager.OnPageChangeListener, TabHost.OnTabChangeListener {
+    private static final String TAG = "MainActivity";
 
     private FragmentTabHost mTabHost;
     private LayoutInflater layoutInflater;
     private Class fragmentArray[] = { Fragment1.class, Fragment2.class };
+
     private int imageViewArray[] = { R.drawable.tab_home_btn, R.drawable.tab_view_btn };
+
     private String textViewArray[] = { "首页", "分类"};
+
     private List<Fragment> list = new ArrayList<Fragment>();
     private ViewPager vp;
 
@@ -58,12 +63,13 @@ public class MainActivity extends FragmentActivity implements
         /*新建Tabspec选项卡并设置Tab菜单栏的内容和绑定对应的Fragment*/
         for (int i = 0; i < count; i++) {
             // 给每个Tab按钮设置标签、图标和文字
-            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(textViewArray[i])
-                    .setIndicator(getTabItemView(i));
+            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(textViewArray[i]).setIndicator(getTabItemView(i));
+
             // 将Tab按钮添加进Tab选项卡中，并绑定Fragment
             mTabHost.addTab(tabSpec, fragmentArray[i], null);
             mTabHost.setTag(i);
-            mTabHost.getTabWidget().getChildAt(i)
+            mTabHost.getTabWidget()
+                    .getChildAt(i)
                     .setBackgroundResource(R.drawable.selector_tab_background);//设置Tab被选中的时候颜色改变
         }
     }
@@ -84,10 +90,11 @@ public class MainActivity extends FragmentActivity implements
     private View getTabItemView(int i) {
         //将xml布局转换为view对象
         View view = layoutInflater.inflate(R.layout.tab_content, null);
+
         //利用view对象，找到布局中的组件,并设置内容，然后返回视图
-        ImageView mImageView = (ImageView) view
-                .findViewById(R.id.tab_imageview);
+        ImageView mImageView = (ImageView) view.findViewById(R.id.tab_imageview);
         TextView mTextView = (TextView) view.findViewById(R.id.tab_textview);
+
         mImageView.setBackgroundResource(imageViewArray[i]);
         mTextView.setText(textViewArray[i]);
         return view;
@@ -96,16 +103,19 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onPageScrollStateChanged(int arg0) {
+        Log.d(TAG, "onPageScrollStateChanged: "+arg0);
 
     }//arg0 ==1的时候表示正在滑动，arg0==2的时候表示滑动完毕了，arg0==0的时候表示什么都没做，就是停在那。
 
     @Override
     public void onPageScrolled(int arg0, float arg1, int arg2) {
+        Log.d(TAG, "onPageScrolled: "+arg0 +" "+ arg1+"  "+arg2);
 
     }//表示在前一个页面滑动到后一个页面的时候，在前一个页面滑动前调用的方法
 
     @Override
     public void onPageSelected(int arg0) {//arg0是表示你当前选中的页面位置Postion，这事件是在你页面跳转完毕的时候调用的。
+        Log.d(TAG, "onPageSelected: "+arg0);
         TabWidget widget = mTabHost.getTabWidget();
         int oldFocusability = widget.getDescendantFocusability();
         widget.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);//设置View覆盖子类控件而直接获得焦点
@@ -116,6 +126,7 @@ public class MainActivity extends FragmentActivity implements
 
     @Override
     public void onTabChanged(String tabId) {//Tab改变的时候调用
+        Log.d(TAG, "onTabChanged: "+tabId);
         int position = mTabHost.getCurrentTab();
         vp.setCurrentItem(position);//把选中的Tab的位置赋给适配器，让它控制页面切换
     }
